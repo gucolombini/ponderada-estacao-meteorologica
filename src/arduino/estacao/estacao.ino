@@ -1,29 +1,20 @@
-float temp = 550;
-float umid = 24;
+#include "DHT.h"
+#define DHTPIN A0
+#define DHTTYPE DHT11
 
-void setup() {
-Serial.begin(9600);
+DHT dht(DHTPIN, DHTTYPE);
+  void setup() {
+  Serial.begin(9600);
+  dht.begin();
 }
-
-void updatestats() {
-  temp += random(-10, 11);
-
-  if (temp < 550) temp = 550;
-  if (temp > 600) temp = 600;
-
-  umid += random(-1, 2);
-
-  if (umid < 24) umid = 24;
-  if (umid > 28) umid = 28;
-}
-
 void loop() {
-updatestats();
-if (!isnan(temp) && !isnan(umid)) {
-Serial.print("{");
-Serial.print("\"temperatura\":"); Serial.print(temp/10);
-Serial.print(",\"umidade\":"); Serial.print(umid);
-Serial.println("}");
-}
-delay(1000);
+  float temp = dht.readTemperature();
+  float umid = dht.readHumidity();
+  if (!isnan(temp) && !isnan(umid)) {
+    Serial.print("{");
+    Serial.print("\"temperatura\":"); Serial.print(temp);
+    Serial.print(",\"umidade\":"); Serial.print(umid);
+    Serial.println("}");
+  }
+  delay(5000);
 }

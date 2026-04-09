@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<body>
+<h2>Histórico</h2>
+
+<a href="/home">Voltar</a>
+
+<table border="1">
+<thead>
+<tr>
+<th>ID</th><th>Temp<img src="./static/assets/termometro.png" width="30px"></th><th>Umidade<img src="./static/assets/umidade.png" width="30px"></th><th>Timestamp</th><th>Ações</th>
+</tr>
+</thead>
+<tbody id="t"></tbody>
+</table>
+
+<script>
+async function load(){
+  let r = await fetch("/leituras");
+  let d = await r.json();
+  let t = document.getElementById("t");
+  t.innerHTML="";
+  d.forEach(l=>{
+    t.innerHTML += `<tr>
+      <td>${l.id}</td>
+      <td>${l.temperatura}</td>
+      <td>${l.umidade}</td>
+      <td>${l.timestamp}</td>
+      <td>
+        <button onclick="del(${l.id})" style="width:30px; height:30px; background-image: url('/static/assets/bomba.png'); background-size: contain;"></button>
+        <button onclick="edit(${l.id})" style="width:30px; height:30px; background-image: url('/static/assets/lapis.png'); background-size: contain;"></button>
+      </td>
+    </tr>`;
+  });
+}
+
+async function del(id){
+  await fetch("/leituras/"+id,{method:"DELETE"});
+  load();
+}
+
+function edit(id){
+  location="editar?id="+id;
+}
+
+load();
+</script>
+
+</body>
+</html>

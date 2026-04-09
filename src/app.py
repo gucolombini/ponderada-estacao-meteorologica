@@ -10,6 +10,14 @@ CORS(app)
 def home():
     return render_template("index.html")
 
+@app.route("/historico")
+def historico():
+    return render_template("historico.html")
+
+@app.route("/editar")
+def editar():
+    return render_template("editar.html")
+
 @app.route("/", methods=["GET"])
 def index():
     leituras = database.ultimas_leituras(10)
