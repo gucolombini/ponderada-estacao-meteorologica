@@ -23,8 +23,8 @@ async function load(){
   d.forEach(l=>{
     t.innerHTML += `<tr>
       <td>${l.id}</td>
-      <td>${l.temperatura}</td>
-      <td>${l.umidade}</td>
+      <td>${l.temperatura}°C</td>
+      <td>${l.umidade}%</td>
       <td>${l.timestamp}</td>
       <td>
         <button onclick="del(${l.id})" style="width:30px; height:30px; background-image: url('/static/assets/bomba.png'); background-size: contain;"></button>

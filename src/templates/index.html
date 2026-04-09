@@ -1,36 +1,106 @@
 <!DOCTYPE html>
 <html>
-<body>
-<h2>Últimas Leituras</h2>
+<head>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<style>
+.container {
+  display: flex;
+}
 
-<table border="1">
-<thead>
-<tr><th>ID</th><th>Temp<img src="./static/assets/termometro.png" width="30px"></th><th>Umidade<img src="./static/assets/umidade.png" width="30px"></th><th>Timestamp</th></tr>
-</thead>
-<tbody id="t"></tbody>
-</table>
+.box {
+  width: 50%;
+  padding: 10px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+  
+  <div class="box">
+    <h2>Últimas Leituras</h2>
+    <table border="1">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Temp <img src="./static/assets/termometro.png" width="30px"></th>
+          <th>Umidade <img src="./static/assets/umidade.png" width="30px"></th>
+          <th>Timestamp</th>
+        </tr>
+      </thead>
+      <tbody id="t"></tbody>
+    </table>
+  </div>
+
+  <div class="box">
+    <h3>Gráfico</h3>
+    <canvas id="grafico"></canvas>
+  </div>
+
+</div>
 
 <script>
+let chart;
+
 async function load(){
   let r = await fetch("/");
   let d = await r.json();
+
   let t = document.getElementById("t");
   t.innerHTML="";
+
+  let labels = [];
+  let temps = [];
+  let umids = [];
+
   d.forEach(l=>{
     t.innerHTML += `<tr>
       <td>${l.id}</td>
-      <td>${l.temperatura}°F</td>
-      <td>${l.umidade}</td>
+      <td>${l.temperatura}°C</td>
+      <td>${l.umidade}%</td>
       <td>${l.timestamp}</td>
     </tr>`;
+
+    labels.push(l.timestamp);
+    temps.push(l.temperatura);
+    umids.push(l.umidade);
+  });
+
+  labels.reverse();
+  temps.reverse();
+  umids.reverse();
+
+  if(chart) chart.destroy();
+
+  chart = new Chart(document.getElementById("grafico"), {
+    type: "line",
+    data: {
+      labels: labels,
+      datasets: [
+        { label: "Umidade", data: umids },
+        { label: "Temperatura", data: temps },
+      ]
+    },
+    options: {
+        responsive: true,
+        scales: {
+            y: {
+            min: 0,   // valor mínimo do eixo
+            max: 100  // valor máximo do eixo
+            }
+        }
+    }
   });
 }
+
 load();
-setInterval(load,500);
+setInterval(load, 2000);
 </script>
 
 <a href="/historico">Histórico</a>
 <br>
 <img src="./static/assets/arduino.png">
+
 </body>
 </html>
